@@ -12,4 +12,20 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.get("/", async (req, res) => {
+  const userEmail = req.query.email;
+
+  if (!userEmail) {
+    return res.status(400).json({ message: "Email is required" });
+  }
+
+  try {
+    const bookings = await Booking.find({ email: userEmail }).populate("carId");
+    res.json(bookings);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch bookings", error: err.message });
+  }
+});
+
+
 module.exports = router;
