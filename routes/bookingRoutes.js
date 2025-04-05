@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Booking = require("../models/Booking");
 
+// ✅ Create a new booking
 router.post("/", async (req, res) => {
   try {
     const booking = new Booking(req.body);
@@ -12,20 +13,27 @@ router.post("/", async (req, res) => {
   }
 });
 
+// ✅ Get user-specific bookings with populated car info
 router.get("/", async (req, res) => {
-  const userEmail = req.query.email;
-
-  if (!userEmail) {
-    return res.status(400).json({ message: "Email is required" });
-  }
-
   try {
-    const bookings = await Booking.find({ email: userEmail }).populate("carId");
+    const email = req.query.email;
+    const filter = email ? { email } : {};
+
+    const bookings = await Booking.find(filter).populate("carId");
     res.json(bookings);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch bookings", error: err.message });
   }
 });
 
+// ✅ Cancel a booking
+router.delete("/:id", async (req, res) => {
+  try {
+    await Booking.findByIdAndDelete(req.params.id);
+    res.json({ message: "Booking cancelled" });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to cancel booking", error: err.message });
+  }
+});
 
 module.exports = router;
