@@ -16,6 +16,10 @@ app.use(cookieParser());
 const carRoutes = require('./routes/carRoutes');
 app.use('/api/cars', carRoutes);
 
+const bookingRoutes = require("./routes/bookingRoutes");
+app.use("/api/bookings", bookingRoutes);
+
+
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.log(err));
