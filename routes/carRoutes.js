@@ -36,4 +36,31 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+router.post("/", async (req, res) => {
+  try {
+    const newCar = new Car({
+      ...req.body,
+      addedBy: req.body.email, // include user's email in request
+    });
+    const savedCar = await newCar.save();
+    res.status(201).json(savedCar);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get("/", async (req, res) => {
+  try {
+    const email = req.query.email;
+    const filter = email ? { addedBy: email } : {};
+
+    const cars = await Car.find(filter);
+    res.json(cars);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch cars" });
+  }
+});
+
+
+
 module.exports = router;

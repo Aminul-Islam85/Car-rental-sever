@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Booking = require("../models/Booking");
 
-// ✅ Create a new booking
+
 router.post("/", async (req, res) => {
   try {
     const booking = new Booking(req.body);
@@ -13,7 +13,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// ✅ Get user-specific bookings with populated car info
+
 router.get("/", async (req, res) => {
   try {
     const email = req.query.email;
@@ -26,7 +26,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// ✅ Cancel a booking
+
 router.delete("/:id", async (req, res) => {
   try {
     await Booking.findByIdAndDelete(req.params.id);

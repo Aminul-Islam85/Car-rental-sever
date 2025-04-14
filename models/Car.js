@@ -9,6 +9,7 @@ const carSchema = new mongoose.Schema({
   description: String,
   image: String,
   location: String,
+  addedBy: String,
 });
 
 module.exports = mongoose.model("Car", carSchema);
