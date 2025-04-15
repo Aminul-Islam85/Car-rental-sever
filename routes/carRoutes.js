@@ -61,6 +61,29 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.delete("/:id", async (req, res) => {
+  try {
+    await Car.findByIdAndDelete(req.params.id);
+    res.json({ message: "Car deleted" });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to delete car", error: err.message });
+  }
+});
+
+// Update car
+router.put("/:id", async (req, res) => {
+  try {
+    const updatedCar = await Car.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    res.json(updatedCar);
+  } catch (err) {
+    res.status(500).json({ message: "Update failed", error: err.message });
+  }
+});
+
+
+
 
 
 module.exports = router;
