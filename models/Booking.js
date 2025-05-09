@@ -10,11 +10,11 @@ const bookingSchema = new mongoose.Schema({
   email: String,
   startDate: String,
   endDate: String,
-  totalPrice: Number, // ⬅️ Add this
+  totalPrice: Number, 
   status: {
     type: String,
     enum: ["confirmed", "pending", "canceled"],
-    default: "confirmed" // ⬅️ Default to confirmed
+    default: "confirmed" 
   },
   createdAt: {
     type: Date,

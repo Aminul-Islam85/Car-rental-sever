@@ -1,11 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const Car = require("../models/Car"); 
+const Car = require("../models/Car");
 
-// Add new car
+// Add a new car (POST)
 router.post("/", async (req, res) => {
   try {
-    const newCar = new Car(req.body);
+    const newCar = new Car({
+      ...req.body,
+      addedBy: req.body.email, // Save the email of user
+    });
     const savedCar = await newCar.save();
     res.status(201).json(savedCar);
   } catch (err) {
@@ -13,17 +16,19 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Get all cars
+// Get all cars or cars by email (GET)
 router.get("/", async (req, res) => {
   try {
-    const cars = await Car.find();
+    const email = req.query.email;
+    const filter = email ? { addedBy: email } : {};
+    const cars = await Car.find(filter);
     res.json(cars);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch cars" });
   }
 });
 
-// ✅ Get car by ID (this is what you're missing!)
+// Get car by ID (GET)
 router.get("/:id", async (req, res) => {
   try {
     const car = await Car.findById(req.params.id);
@@ -36,31 +41,17 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+// Update car (PUT)
+router.put("/:id", async (req, res) => {
   try {
-    const newCar = new Car({
-      ...req.body,
-      addedBy: req.body.email, // include user's email in request
-    });
-    const savedCar = await newCar.save();
-    res.status(201).json(savedCar);
+    const updatedCar = await Car.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(updatedCar);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ message: "Update failed", error: err.message });
   }
 });
 
-router.get("/", async (req, res) => {
-  try {
-    const email = req.query.email;
-    const filter = email ? { addedBy: email } : {};
-
-    const cars = await Car.find(filter);
-    res.json(cars);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch cars" });
-  }
-});
-
+// Delete car (DELETE)
 router.delete("/:id", async (req, res) => {
   try {
     await Car.findByIdAndDelete(req.params.id);
@@ -69,21 +60,5 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ message: "Failed to delete car", error: err.message });
   }
 });
-
-// Update car
-router.put("/:id", async (req, res) => {
-  try {
-    const updatedCar = await Car.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
-    res.json(updatedCar);
-  } catch (err) {
-    res.status(500).json({ message: "Update failed", error: err.message });
-  }
-});
-
-
-
-
 
 module.exports = router;
